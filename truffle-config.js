@@ -24,6 +24,12 @@
 // const fs = require('fs');
 // const mnemonic = fs.readFileSync(".secret").toString().trim();
 
+let env = require("./config/env.json");
+const infuraKey = env["INFRA_API_KEY"];
+const alchemyapiId = env["ALCHEMY_API_ID"];
+
+const HDWalletProvider = require('truffle-hdwallet-provider');
+
 module.exports = {
   /**
    * Networks define how you connect to your ethereum client and let you set the
@@ -72,6 +78,22 @@ module.exports = {
     // network_id: 2111,   // This network is yours, in the cloud.
     // production: true    // Treats this network as if it was a public net. (default: false)
     // }
+    kovan: {
+      provider: function() {
+        // Or, pass an array of private keys, and optionally use a certain subset of addresses
+        var privateKeys = [
+          env.DEPLOY_PRIVATE_KEY,          
+        ];
+        
+        //return new HDWalletProvider(privateKeys, "https://eth-kovan.alchemyapi.io/v2/CwRjtMcuSDLtPt0ymjR7pwTQ65N3OPA9" );
+        return new HDWalletProvider(privateKeys, "https://kovan.infura.io/v3/" + infuraKey);
+      },      
+      network_id: 42
+      , gas : 5500000,
+      confirmations: 2, // # of confs to wait between deployments. (default: 0)
+      timeoutBlocks: 200, // # of blocks before a deployment times out  (minimum/default: 50)
+      skipDryRun: true, // Skip dry run before migrations? (default: false for public nets )
+    }
   },
 
   // Set default mocha options here, use special reporters etc.
